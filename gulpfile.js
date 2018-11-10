@@ -6,7 +6,9 @@ var $          = require('gulp-load-plugins')(),
   extend     = require('extend'),
   fs         = require("fs"),
   gulp       = require('gulp'),
-  importOnce = require('node-sass-import-once');
+  importOnce = require('node-sass-import-once'),
+  browserSync = require('browser-sync').create(),
+  reload = browserSync.reload;
 
 var options = {};
 
@@ -129,3 +131,23 @@ gulp.task('lint:sass', function () {
     }))
     .pipe($.sassLint.format());
 });
+
+
+//define task
+gulp.task('bsync', function () {
+    //spin up dev server
+    browserSync.init({
+      proxy: "pan.foamsource.lok",
+      hostname: "pan.foamsource.lok",
+      port: 3000,
+    });
+
+    //when css files change, reload browserSync 
+    gulp.watch('./css/*.css').on('change', function () {
+        browserSync.reload();
+    });
+
+});
+
+//call task with 'gulp runbsync'
+gulp.task('runbsync', ['bsync']);
